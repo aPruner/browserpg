@@ -10,6 +10,16 @@ const game = {
   width: 800,
   height: 600,
   type: Phaser.AUTO,
+  physics: {
+    default: 'arcade',
+    arcade: {
+      gravity: {
+        x: 0,
+        y: 0
+      },
+      debug: false
+    }
+  },
   scene: {
     preload,
     create,
