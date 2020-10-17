@@ -1,17 +1,22 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { defineCustomElements as defineIonPhaser } from '@ion-phaser/core/loader'
+import Phaser from 'phaser'
 import App from './App';
-import * as serviceWorker from './serviceWorker';
+import { preload, create, update } from './Game';
+import './index.css';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+const game = {
+  width: 800,
+  height: 600,
+  type: Phaser.AUTO,
+  scene: {
+    preload,
+    create,
+    update
+  }
+}
+ 
+ReactDOM.render(<App game={<ion-phaser ref={el => el.game = game} />}/>, document.getElementById('root'));
+ 
+defineIonPhaser(window);
