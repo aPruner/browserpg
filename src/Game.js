@@ -1,3 +1,6 @@
+import createAnims from './player/Anims';
+
+let tileset;
 let world;
 let player;
 let cursors;
@@ -6,14 +9,21 @@ let playerSpeed = 0.15;
 function preload() {
   console.log('preload');
 
+  const assetBaseUrl = `http://${process.env.REACT_APP_ASSETS_SERVER_HOSTNAME}:${process.env.REACT_APP_ASSETS_SERVER_PORT}`;
+
   // load sprites and spritesheets
-  this.load.image('background', `http://${process.env.REACT_APP_ASSETS_SERVER_HOSTNAME}:${process.env.REACT_APP_ASSETS_SERVER_PORT}/bg.jpg`);
-  this.load.spritesheet('char', `http://${process.env.REACT_APP_ASSETS_SERVER_HOSTNAME}:${process.env.REACT_APP_ASSETS_SERVER_PORT}/char.png`, { frameWidth: 32, frameHeight: 32 });
+  this.load.image('tiles', `${assetBaseUrl}/tilesheet.png`);
+  this.load.spritesheet('char', `${assetBaseUrl}/char.png`, { frameWidth: 32, frameHeight: 32 });
+  this.load.tilemapTiledJSON('map', `${assetBaseUrl}/rpgMap2.json`);
 }
 
 function create() {
   console.log('create');
-  this.add.image(0, 0, 'background');
+  this.map = this.make.tilemap({key: 'map'});
+  tileset = this.map.addTilesetImage('tilesheet_32x', 'tiles');
+  this.groundLayer1 = this.map.createStaticLayer('ground1', tileset, 0, 0);
+  this.groundLayer2 = this.map.createStaticLayer('ground2', tileset, 0, 0);
+  this.objectsLayer = this.map.createStaticLayer('objects3', tileset, 0, 0);
 
   // create world physics object
   world = this.physics.add.staticGroup();
@@ -22,59 +32,9 @@ function create() {
   player = this.physics.add.sprite(100, 100, 'char');
   player.setBounce(0.2);
   player.setCollideWorldBounds(true);
-
-  // create player animations
-  this.anims.create({
-    key: 'dIdle',
-    frames: [ { key: 'char', frame: 1 } ],
-    frameRate: 20,
-  });
-
-  this.anims.create({
-    key: 'lIdle',
-    frames: [ { key: 'char', frame: 4 } ],
-    frameRate: 20,
-  });
-
-  this.anims.create({
-    key: 'rIdle',
-    frames: [ { key: 'char', frame: 7 } ],
-    frameRate: 20,
-  });
-
-  this.anims.create({
-    key: 'uIdle',
-    frames: [ { key: 'char', frame: 10 } ],
-    frameRate: 20,
-  });
-
-  this.anims.create({
-    key: 'down',
-    frames: this.anims.generateFrameNumbers('char', { start: 0, end: 2 }),
-    frameRate: 10,
-    repeat: -1
-  });
-
-  this.anims.create({
-    key: 'left',
-    frames: this.anims.generateFrameNumbers('char', { start: 3, end: 5 }),
-    frameRate: 10,
-    repeat: -1
-  });
-
-  this.anims.create({
-    key: 'right',
-    frames: this.anims.generateFrameNumbers('char', { start: 6, end: 8 }),
-    frameRate: 10,
-    repeat: -1
-  });
-
-  this.anims.create({
-    key: 'up',
-    frames: this.anims.generateFrameNumbers('char', { start: 9, end: 11 }),
-    frameRate: 10,
-    repeat: -1
-  });
+  createAnims(this.anims);
+  this.cameras.main.startFollow(player);
+  this.physics.world.setBounds(0, 0, 1024, 1024);
 
   // init keyboard input controller
   cursors = this.input.keyboard.createCursorKeys();
