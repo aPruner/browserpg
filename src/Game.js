@@ -1,7 +1,13 @@
 import Player from './player/Player';
+import io from 'socket.io-client';
 
 let tileset;
 let playerInstance;
+const socket = io('ws://localhost:5000');
+console.log(socket);
+socket.on('message', function(data) {
+  console.log('got a message from the server: ', data);
+});
 
 function preload() {
   console.log('preload');
