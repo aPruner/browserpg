@@ -1,10 +1,15 @@
 import createAnims from './player/Anims';
+import Phaser from 'phaser';
 
 let tileset;
-let world;
 let player;
-let cursors;
+let keyboardInput;
 let playerSpeed = 0.15;
+
+let wKey;
+let aKey;
+let sKey;
+let dKey;
 
 function preload() {
   console.log('preload');
@@ -25,9 +30,6 @@ function create() {
   this.groundLayer2 = this.map.createStaticLayer('ground2', tileset, 0, 0);
   this.objectsLayer = this.map.createStaticLayer('objects3', tileset, 0, 0);
 
-  // create world physics object
-  world = this.physics.add.staticGroup();
-
   // init player
   player = this.physics.add.sprite(100, 100, 'char');
   player.setBounce(0.2);
@@ -37,37 +39,40 @@ function create() {
   this.physics.world.setBounds(0, 0, 1024, 1024);
 
   // init keyboard input controller
-  cursors = this.input.keyboard.createCursorKeys();
+  wKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+  aKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+  sKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+  dKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 }
 
 function update(timestamp, delta) {
 
   // Handle player movement
-  if (cursors.left.isDown) {
+  if (aKey.isDown) {
     player.x -= delta * playerSpeed;
     player.anims.play('left', true);
   }
   
-  if (cursors.right.isDown) {
+  if (dKey.isDown) {
     player.x += delta * playerSpeed;
     player.anims.play('right', true);
   }
 
-  if (cursors.up.isDown) {
+  if (wKey.isDown) {
     player.y -= delta * playerSpeed;
-    if (!player.anims.isPlaying || (!cursors.left.isDown && !cursors.right.isDown)) {
+    if (!player.anims.isPlaying || (!aKey.isDown && !dKey.isDown)) {
       player.anims.play('up', true);
     }
   }
   
-  if (cursors.down.isDown) {
+  if (sKey.isDown) {
     player.y += delta * playerSpeed;
-    if (!player.anims.isPlaying || (!cursors.left.isDown && !cursors.right.isDown)) {
+    if (!player.anims.isPlaying || (!aKey.isDown && !dKey.isDown)) {
       player.anims.play('down', true);
     }
   }
 
-  if (player.anims.isPlaying && !cursors.left.isDown && !cursors.right.isDown && !cursors.up.isDown && !cursors.down.isDown) {
+  if (player.anims.isPlaying && !aKey.isDown && !dKey.isDown && !wKey.isDown && !sKey.isDown) {
     const idleKey = `${player.anims.getCurrentKey()[0]}Idle`;
     player.anims.play(idleKey, true);
     player.anims.stop();
