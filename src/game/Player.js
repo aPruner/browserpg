@@ -16,19 +16,13 @@ class Player {
 
     // Attach socketClientInstance for connection to the server
     this.socketClientInstance = socketClientInstance;
-
-    // Assign basic stats
-    this.level = 1;
-    this.exp = 0;
-    this.hp = 10;
-    this.stats = [10, 10, 10, 10, 10] // stats are str, agi, int, end, luk
   }
 
   handleInput(delta) {
     // Handle player movement
     this.handleMovementInput(delta);
 
-    // TODO: Handle other type of input, such as attacking, etc
+    // TODO: Handle other types of input, such as attacking, etc
   }
 
   handleMovementInput(delta) {

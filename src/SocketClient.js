@@ -1,5 +1,5 @@
 import io from 'socket.io-client';
-import Player from './player/Player';
+import Player from './game/Player';
 
 // Object defining possible client event schemas to send to the server
 const clientEvents = {
@@ -21,9 +21,7 @@ class SocketClient {
     this.socket.on('connectionSuccess', () => {
       console.log('socket ' + this.socket.id + ' successfully connected to the server');
     })
-
   }
-
 }
 
 export default SocketClient;

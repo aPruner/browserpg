@@ -1,5 +1,5 @@
-import Player from './player/Player';
-import SocketClient from './SocketClient';
+import Player from './Player';
+import SocketClient from '../SocketClient';
 
 let tileset;
 let playerInstance;
@@ -47,6 +47,10 @@ function initGameWorldAndMap(scene) {
 
 function initCamera(scene) {
   scene.cameras.main.startFollow(playerInstance.phaserSprite);
+}
+
+function onReceiveGameStateFromServer(gameState) {
+    
 }
 
 export {
