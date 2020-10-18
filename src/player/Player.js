@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 const playerSpeed = 0.15;
 
 class Player {
-  constructor(phaserSprite, phaserKeyboardInput) {
+  constructor(phaserSprite, phaserKeyboardInput, socketClientInstance) {
     // Attach phaser stuff
     this.phaserSprite = phaserSprite;
     this.phaserSprite.setBounce(0.2);
@@ -13,6 +13,9 @@ class Player {
     this.aKey = phaserKeyboardInput.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     this.sKey = phaserKeyboardInput.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     this.dKey = phaserKeyboardInput.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+
+    // Attach socketClientInstance for connection to the server
+    this.socketClientInstance = socketClientInstance;
 
     // Assign basic stats
     this.level = 1;

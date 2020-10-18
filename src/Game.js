@@ -1,17 +1,13 @@
 import Player from './player/Player';
-import io from 'socket.io-client';
+import SocketClient from './SocketClient';
 
 let tileset;
 let playerInstance;
-const socket = io('ws://localhost:5000');
-console.log(socket);
-socket.on('message', function(data) {
-  console.log('got a message from the server: ', data);
-});
+let socketClientInstance;
 
+
+// Core phaser game loop functions
 function preload() {
-  console.log('preload');
-
   const assetBaseUrl = `http://${process.env.REACT_APP_ASSETS_SERVER_HOSTNAME}:${process.env.REACT_APP_ASSETS_SERVER_PORT}`;
 
   // load sprites and spritesheets
@@ -21,22 +17,36 @@ function preload() {
 }
 
 function create() {
-  console.log('create');
-  this.map = this.make.tilemap({key: 'map'});
-  tileset = this.map.addTilesetImage('tilesheet_32x', 'tiles');
-  this.groundLayer1 = this.map.createStaticLayer('ground1', tileset, 0, 0);
-  this.groundLayer2 = this.map.createStaticLayer('ground2', tileset, 0, 0);
-  this.objectsLayer = this.map.createStaticLayer('objects3', tileset, 0, 0);
-  this.physics.world.setBounds(0, 0, 1024, 1024);
+  // init the map and world
+  initGameWorldAndMap(this);
+
+  // init socket client
+  socketClientInstance = new SocketClient();
   
   // init player
-  playerInstance = new Player(this.physics.add.sprite(100, 100, 'char'), this.input.keyboard);
+  playerInstance = new Player(this.physics.add.sprite(100, 100, 'char'), this.input.keyboard, socketClientInstance);
   playerInstance.createAnims(this.anims);
-  this.cameras.main.startFollow(playerInstance.phaserSprite);
+
+  // init the camera
+  initCamera(this);
 }
 
 function update(timestamp, delta) {
   playerInstance.handleInput(delta);
+}
+
+// Helper functions
+function initGameWorldAndMap(scene) {
+  scene.map = scene.make.tilemap({key: 'map'});
+  tileset = scene.map.addTilesetImage('tilesheet_32x', 'tiles');
+  scene.groundLayer1 = scene.map.createStaticLayer('ground1', tileset, 0, 0);
+  scene.groundLayer2 = scene.map.createStaticLayer('ground2', tileset, 0, 0);
+  scene.objectsLayer = scene.map.createStaticLayer('objects3', tileset, 0, 0);
+  scene.physics.world.setBounds(0, 0, 1024, 1024);
+}
+
+function initCamera(scene) {
+  scene.cameras.main.startFollow(playerInstance.phaserSprite);
 }
 
 export {
