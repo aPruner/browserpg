@@ -1,15 +1,7 @@
-import createAnims from './player/Anims';
-import Phaser from 'phaser';
+import Player from './player/Player';
 
 let tileset;
-let player;
-let keyboardInput;
-let playerSpeed = 0.15;
-
-let wKey;
-let aKey;
-let sKey;
-let dKey;
+let playerInstance;
 
 function preload() {
   console.log('preload');
@@ -29,54 +21,16 @@ function create() {
   this.groundLayer1 = this.map.createStaticLayer('ground1', tileset, 0, 0);
   this.groundLayer2 = this.map.createStaticLayer('ground2', tileset, 0, 0);
   this.objectsLayer = this.map.createStaticLayer('objects3', tileset, 0, 0);
-
-  // init player
-  player = this.physics.add.sprite(100, 100, 'char');
-  player.setBounce(0.2);
-  player.setCollideWorldBounds(true);
-  createAnims(this.anims);
-  this.cameras.main.startFollow(player);
   this.physics.world.setBounds(0, 0, 1024, 1024);
-
-  // init keyboard input controller
-  wKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-  aKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-  sKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-  dKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+  
+  // init player
+  playerInstance = new Player(this.physics.add.sprite(100, 100, 'char'), this.input.keyboard);
+  playerInstance.createAnims(this.anims);
+  this.cameras.main.startFollow(playerInstance.phaserSprite);
 }
 
 function update(timestamp, delta) {
-
-  // Handle player movement
-  if (aKey.isDown) {
-    player.x -= delta * playerSpeed;
-    player.anims.play('left', true);
-  }
-  
-  if (dKey.isDown) {
-    player.x += delta * playerSpeed;
-    player.anims.play('right', true);
-  }
-
-  if (wKey.isDown) {
-    player.y -= delta * playerSpeed;
-    if (!player.anims.isPlaying || (!aKey.isDown && !dKey.isDown)) {
-      player.anims.play('up', true);
-    }
-  }
-  
-  if (sKey.isDown) {
-    player.y += delta * playerSpeed;
-    if (!player.anims.isPlaying || (!aKey.isDown && !dKey.isDown)) {
-      player.anims.play('down', true);
-    }
-  }
-
-  if (player.anims.isPlaying && !aKey.isDown && !dKey.isDown && !wKey.isDown && !sKey.isDown) {
-    const idleKey = `${player.anims.getCurrentKey()[0]}Idle`;
-    player.anims.play(idleKey, true);
-    player.anims.stop();
-  }
+  playerInstance.handleInput(delta);
 }
 
 export {
