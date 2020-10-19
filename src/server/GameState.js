@@ -8,6 +8,9 @@ class GameState {
 		// Maps socket ids to player instances
 		this.players = {};
 
+		// variables to hold the last update time, and delta time
+		this.lastUpdate = 0;
+		this.delta = 0;
 	}
 
 	createNewPlayer() {
@@ -31,14 +34,22 @@ class GameState {
 	}
 
 	// Update the game state for a given socket id (mapping to a specific client/player) based on the data
-	update(socketId, data) {
+	updateSpecificPlayerFromInput(socketId, data) {
 		console.log('updating gameState server-side for socket: ' + socketId + ' with data: ', data);
 		this.players[socketId].update(data);
 	}
 
-	broadcast() {
+	// Update the game state periodically
+	updateAllPlayers() {
+		const currentTime = Date.now();
+		this.delta = currentTime - this.lastUpdate;
+		this.lastUpdate = currentTime;
 
+		this.players.values().forEach(player => {
+			player.update(currentTime, delta);
+		});
 	}
+
 }
 
 module.exports = GameState;
