@@ -45,8 +45,19 @@ class GameState {
 		this.delta = currentTime - this.lastUpdate;
 		this.lastUpdate = currentTime;
 
-		this.players.values().forEach(player => {
-			player.update(currentTime, delta);
+		Object.values(this.players).forEach(player => {
+			player.update(currentTime, this.delta);
+		});
+	}
+
+	broadcastState() {
+		const players = Object.values(this.players);
+		Object.keys(this.clients).forEach((socketId) => {
+			const currentPlayer = this.players[socketId];
+			this.clients[socketId].emit('update', {
+				self: currentPlayer,
+				players: players
+			});
 		});
 	}
 

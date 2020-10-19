@@ -1,10 +1,10 @@
+import io from 'socket.io-client';
+
 import Player from './Player';
-import SocketClient from '../SocketClient';
 
 let tileset;
 let playerInstance;
 let socketClientInstance;
-
 
 // Core phaser game loop functions
 function preload() {
@@ -20,8 +20,15 @@ function create() {
   // init the map and world
   initGameWorldAndMap(this);
 
-  // init socket client
-  socketClientInstance = new SocketClient();
+  // init socket
+  this.socket = io(`ws://${process.env.REACT_APP_SOCKET_CLIENT_HOSTNAME}:${process.env.REACT_APP_SOCKET_CLIENT_PORT}`);
+  // attach a connectionSuccess listener to hear back from the server if we succeeded
+  this.socket.on('connectionSuccess', () => {
+    console.log('socket ' + this.socket.id + ' successfully connected to the server');
+  })
+
+  // attach listener to update events from the server
+  this.socket.on('update', newState => onReceiveGameStateFromServer(newState));
   
   // init player
   playerInstance = new Player(this.physics.add.sprite(100, 100, 'char'), this.input.keyboard, socketClientInstance);
@@ -49,8 +56,8 @@ function initCamera(scene) {
   scene.cameras.main.startFollow(playerInstance.phaserSprite);
 }
 
-function onReceiveGameStateFromServer(gameState) {
-    
+function onReceiveGameStateFromServer(newState) {
+    console.log('received new state', newState);
 }
 
 export {

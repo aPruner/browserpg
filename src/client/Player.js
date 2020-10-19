@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 const playerSpeed = 0.15;
 
+// Client-side player class
 class Player {
   constructor(phaserSprite, phaserKeyboardInput, socketClientInstance) {
     // Attach phaser stuff

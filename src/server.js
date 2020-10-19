@@ -11,13 +11,11 @@ const app = express();
 const server = http.Server(app);
 const io = socketIO(server);
 
+const FRAME_RATE = 1000 / 60;
+
 app.set('port', 5000);
 
 const gameState = new GameState();
-
-server.listen(5000, () => {
-  console.log('server listening on port 5000');
-});
 
 io.on('connect', socket => {
   console.log('player from socket: ' + socket.id.toString() + ' has joined the server');
@@ -34,5 +32,10 @@ io.on('connect', socket => {
 
 // For testing
 setInterval(() => {
-  io.sockets.emit('message', 'hi')
-}, 1000);
+  gameState.updateAllPlayers();
+  gameState.broadcastState();
+}, FRAME_RATE);
+
+server.listen(5000, () => {
+  console.log('server listening on port 5000');
+});

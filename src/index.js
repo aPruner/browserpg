@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import { defineCustomElements as defineIonPhaser } from '@ion-phaser/core/loader'
 import Phaser from 'phaser'
 import App from './App';
-import { preload, create, update } from './game/Game';
+import { preload, create, update } from './client/Game';
 import './index.css';
 
 const game = {

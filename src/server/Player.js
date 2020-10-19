@@ -1,10 +1,11 @@
 const playerSpeed = 0.15;
 
+// Server-side player class
 class Player {
   constructor(name, socketId) {
     this.name = name;
     this.socketId = socketId;
-    
+
     this.inputState = {
       wKeyPressed: false,
       aKeyPressed: false,
