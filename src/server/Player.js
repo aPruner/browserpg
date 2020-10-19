@@ -6,4 +6,10 @@ class Player {
     this.hp = 10;
     this.stats = [10, 10, 10, 10, 10] // stats are str, agi, int, end, luk
   }
+
+  updateFromInput(data) {
+
+  }
 }
+
+module.exports = Player;

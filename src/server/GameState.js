@@ -1,3 +1,5 @@
+const Player = require('./Player');
+
 // This class is the single source of truth for the game state across all clients
 class GameState {
 	constructor() {
@@ -6,8 +8,10 @@ class GameState {
 		// Maps socket ids to player instances
 		this.players = {};
 
-		
-			
+	}
+
+	createNewPlayer() {
+		return new Player();
 	}
 
 	// Add a player (socket and player instances) to the server game state
@@ -25,4 +29,16 @@ class GameState {
 			delete this.players[socket.id];
 		}
 	}
+
+	// Update the game state for a given socket id (mapping to a specific client/player) based on the data
+	update(socketId, data) {
+		console.log('updating gameState server-side for socket: ' + socketId + ' with data: ', data);
+		this.players[socketId].update(data);
+	}
+
+	broadcast() {
+
+	}
 }
+
+module.exports = GameState;
